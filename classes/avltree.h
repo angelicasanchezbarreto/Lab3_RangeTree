@@ -2,6 +2,9 @@
 #define AVLTREE_H
 
 #include "node.h"
+#include <fstream>
+
+using namespace std;
 
 class RangeTree;
 
@@ -30,12 +33,10 @@ protected:
     void leftRightRotation(Node* node);
     void inOrder(Node *nodo);
 
+    void generatePDF();
+
 public:
-    //AVLTree():root(nullptr),nodes(0) {};
-    AVLTree(){
-        root=nullptr;
-        nodes=0;
-    }
+    AVLTree():root(nullptr),nodes(0){};
 
     bool insert(int key,pair<int,int> point);
     bool hasKey(int key);
@@ -45,6 +46,19 @@ public:
     ~AVLTree();
 
 };
+
+void AVLTree::generatePDF() {
+        fstream file("graph.vz", fstream::out | fstream::trunc);
+        if (file.is_open()) {
+            file << "digraph G\n";
+            file << "{\n";
+            this->root->printAllNodes(file);
+            this->root->printNodesConexiones(file);
+            file << "}\n";
+            file.close();
+            system("dot -Tpdf graph.vz -o graph.pdf");
+        }
+	}
 
 
 int AVLTree::getKey(Node *node){
@@ -128,8 +142,10 @@ void AVLTree::swapData(Node *parent, Node *child){
     parent->key = child->key;
     parent->height = child->height;
     parent->point = child->point;
+    //parent->YTree = child->YTree;
     child->key = temp.key;
     child->height = temp.height;
+    //child->YTree = temp.YTree;
 }
 
 
